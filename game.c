@@ -155,36 +155,36 @@ int main(void) {
     // LIGHTING
     int lightPower = 100;
     // load the image into memory using SDL_image library function
-    // SDL_Surface* surfLight = IMG_Load("resources/light.png");
-    // if (!surfLight) {
-    //     printf("error creating surface\n");
-    //     SDL_DestroyTexture(texPlayer);
-    //     SDL_DestroyTexture(texGhost);
-    //     SDL_DestroyTexture(texCoin);
-    //     SDL_DestroyRenderer(rend);
-    //     SDL_DestroyWindow(win);
-    //     SDL_Quit();
-    //     return 1;
-    // }
-    // // load the image data into the graphics hardware's memory
-    // SDL_Texture* texLight = SDL_CreateTextureFromSurface(rend, surfLight);
-    // SDL_FreeSurface(surfLight);
-    // if (!texLight) {
-    //     printf("error creating texture: %s\n", SDL_GetError());
-    //     SDL_DestroyTexture(texPlayer);
-    //     SDL_DestroyTexture(texGhost);
-    //     SDL_DestroyTexture(texCoin);
-    //     SDL_DestroyRenderer(rend);
-    //     SDL_DestroyWindow(win);
-    //     SDL_Quit();
-    //     return 1;
-    // }
-    // // struct to hold the position and size of the sprite
-    // SDL_Rect rectLight;
-    // // get and scale the dimensions of texture
-    // SDL_QueryTexture(texLight, NULL, NULL, &rectLight.w, &rectLight.h);
-    // rectLight.w = 1;
-    // rectLight.h = 1;
+    SDL_Surface* surfBlack = IMG_Load("resources/black.png");
+    if (!surfBlack) {
+        printf("error creating surface\n");
+        SDL_DestroyTexture(texPlayer);
+        SDL_DestroyTexture(texGhost);
+        SDL_DestroyTexture(texCoin);
+        SDL_DestroyRenderer(rend);
+        SDL_DestroyWindow(win);
+        SDL_Quit();
+        return 1;
+    }
+    // load the image data into the graphics hardware's memory
+    SDL_Texture* texBlack = SDL_CreateTextureFromSurface(rend, surfBlack);
+    SDL_FreeSurface(surfBlack);
+    if (!texBlack) {
+        printf("error creating texture: %s\n", SDL_GetError());
+        SDL_DestroyTexture(texPlayer);
+        SDL_DestroyTexture(texGhost);
+        SDL_DestroyTexture(texCoin);
+        SDL_DestroyRenderer(rend);
+        SDL_DestroyWindow(win);
+        SDL_Quit();
+        return 1;
+    }
+    // struct to hold the position and size of the sprite
+    SDL_Rect rectBlack;
+    // get and scale the dimensions of texture
+    SDL_QueryTexture(texBlack, NULL, NULL, &rectBlack.w, &rectBlack.h);
+    rectBlack.w = 1;
+    rectBlack.h = 1;
 
 
     SDL_Surface* surfLightCircle = IMG_Load("resources/lightCircle.jpeg");
@@ -331,28 +331,28 @@ int main(void) {
         SDL_RenderClear(rend);
 
         // LIGHTING
-        // int minLight = 1;
-        // float center[2] = {rectPlayer.x + rectPlayer.w/2, rectPlayer.y + rectPlayer.h/2};
-        // float topLeft[2] = {center[0] - lightPower, center[1] - lightPower};
-        // float bottomRight[2] = {center[0] + lightPower, center[1] + lightPower};
-        // for (int x = topLeft[0]; x < bottomRight[0]; x += 1) {
-        //     for (int y = topLeft[1]; y < bottomRight[1]; y += 1) {
-        //         float distFromCenter = sqrt((center[0] - x) * (center[0] - x) + (center[1] - y) * (center[1] - y));
-        //         // float tempLightPower = (sqrt(lightPower) - distFromCenter);
-        //         // // float a = (tempLightPower/lightPower) * (tempLightPower/lightPower);
-        //         // // printf("A: %f\n", a);
-        //         // if (tempLightPower < 0) tempLightPower = 0;
-        //         float tempLightPower = lightPower - distFromCenter;
-        //         tempLightPower = tempLightPower * rand()/RAND_MAX;
-        //         printf("%f\n", tempLightPower);
+        int minLight = 1;
+        float center[2] = {rectPlayer.x + rectPlayer.w/2, rectPlayer.y + rectPlayer.h/2};
+        float topLeft[2] = {center[0] - lightPower, center[1] - lightPower};
+        float bottomRight[2] = {center[0] + lightPower, center[1] + lightPower};
+        for (int x = topLeft[0]; x < bottomRight[0]; x += 1) {
+            for (int y = topLeft[1]; y < bottomRight[1]; y += 1) {
+                float distFromCenter = sqrt((center[0] - x) * (center[0] - x) + (center[1] - y) * (center[1] - y));
+                // float tempLightPower = (sqrt(lightPower) - distFromCenter);
+                // // float a = (tempLightPower/lightPower) * (tempLightPower/lightPower);
+                // // printf("A: %f\n", a);
+                // if (tempLightPower < 0) tempLightPower = 0;
+                float tempLightPower = lightPower - distFromCenter;
+                tempLightPower = tempLightPower * rand()/RAND_MAX;
+                printf("%f\n", tempLightPower);
 
-        //         if (tempLightPower > 1) {
-        //             rectLight.x = x;
-        //             rectLight.y = y;
-        //             SDL_RenderCopy(rend, texLight, NULL, &rectLight);
-        //         }
-        //     }
-        // }
+                if (tempLightPower > 1) {
+                    rectBlack.x = x;
+                    rectBlack.y = y;
+                    SDL_RenderCopy(rend, texBlack, NULL, &rectBlack);
+                }
+            }
+        }
 
         // draw the images to the window
         SDL_RenderCopy(rend, texLightCircle, NULL, &rectLightCircle);
