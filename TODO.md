@@ -1,0 +1,12 @@
+# TODO
+- Ghost AI
+  - 1 'Guard' the coin
+- Colors
+  - Shades of White/Black only?
+  - Or maybe just: white, black, grey?
+- Flashlight instead of lamp?
+  - Point towards mouse?
+- Combat?
+  - Laser rifle fire towards mouse?
+  - AI Have Swords? (+ 'Lunge' ability?)
+  - Player 'Sprint' ability?
