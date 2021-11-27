@@ -183,8 +183,8 @@ int main(void) {
     SDL_Rect rectBlack;
     // get and scale the dimensions of texture
     SDL_QueryTexture(texBlack, NULL, NULL, &rectBlack.w, &rectBlack.h);
-    rectBlack.w = 1;
-    rectBlack.h = 1;
+    rectBlack.w = 2;
+    rectBlack.h = 2;
 
 
     SDL_Surface* surfLightCircle = IMG_Load("resources/lightCircle.jpeg");
@@ -230,6 +230,8 @@ int main(void) {
     
     // animation loop
     while (!closeRequested) {
+        clock_t start = clock();
+
         // process events
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -329,46 +331,77 @@ int main(void) {
         // DRAW THE FRAME
         // clear the window
         SDL_RenderClear(rend);
-
-        // LIGHTING
-        int minLight = 1;
-        float center[2] = {rectPlayer.x + rectPlayer.w/2, rectPlayer.y + rectPlayer.h/2};
-        float topLeft[2] = {center[0] - lightPower, center[1] - lightPower};
-        float bottomRight[2] = {center[0] + lightPower, center[1] + lightPower};
-        for (int x = topLeft[0]; x < bottomRight[0]; x += 1) {
-            for (int y = topLeft[1]; y < bottomRight[1]; y += 1) {
-                float distFromCenter = sqrt((center[0] - x) * (center[0] - x) + (center[1] - y) * (center[1] - y));
-                // float tempLightPower = (sqrt(lightPower) - distFromCenter);
-                // // float a = (tempLightPower/lightPower) * (tempLightPower/lightPower);
-                // // printf("A: %f\n", a);
-                // if (tempLightPower < 0) tempLightPower = 0;
-                float tempLightPower = lightPower - distFromCenter;
-                tempLightPower = tempLightPower * rand()/RAND_MAX;
-                printf("%f\n", tempLightPower);
-
-                if (tempLightPower > 1) {
-                    rectBlack.x = x;
-                    rectBlack.y = y;
-                    SDL_RenderCopy(rend, texBlack, NULL, &rectBlack);
-                }
-            }
-        }
-
-        // draw the images to the window
         SDL_RenderCopy(rend, texLightCircle, NULL, &rectLightCircle);
-        SDL_RenderCopy(rend, texPlayer, NULL, &rectPlayer);
         for (int i = 0; i < 3; i++) {
             SDL_RenderCopy(rend, texGhost, NULL, &rectGhosts[i]);
         }
         SDL_RenderCopy(rend, texCoin, NULL, &rectCoin);
 
+        // LIGHTING
+        int minLight = 6;
+        float topLeft[2] = {center[0] - lightPower - 4, center[1] - lightPower - 4};
+        float bottomRight[2] = {center[0] + lightPower + 4, center[1] + lightPower + 4};
+        for (int x = topLeft[0]; x < bottomRight[0]; x += 2) {
+            for (int y = topLeft[1]; y < bottomRight[1]; y += 2) {
+                float distFromCenter = sqrt((center[0] - x) * (center[0] - x) + (center[1] - y) * (center[1] - y));
+                // if (distFromCenter < lightPower + 4) {
+                    float tempLightPower = distFromCenter - lightPower;
+                    tempLightPower = tempLightPower * rand()/RAND_MAX;
+                    // printf("%f\n", tempLightPower);
+
+                    if (tempLightPower > -minLight) {
+                        rectBlack.x = x;
+                        rectBlack.y = y;
+                        SDL_RenderCopy(rend, texBlack, NULL, &rectBlack);
+                    }
+                // }
+            }
+        }
+
+        // draw the images to the window
+        SDL_RenderCopy(rend, texPlayer, NULL, &rectPlayer);
+
+        SDL_Rect rectBar;
+        //left
+        rectBar.x = 0;
+        rectBar.y = 0;
+        rectBar.w = rectLightCircle.x;
+        rectBar.h = WINDOW_HEIGHT;
+        SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
+
+        //right
+        rectBar.x = rectLightCircle.x + rectLightCircle.w;
+        rectBar.y = 0;
+        rectBar.w = WINDOW_WIDTH - rectBar.x;
+        rectBar.h = WINDOW_HEIGHT;
+        SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
+
+        //top
+        rectBar.x = rectLightCircle.x;
+        rectBar.y = 0;
+        rectBar.w = rectLightCircle.w;
+        rectBar.h = rectLightCircle.y;
+        SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
+
+        //bottom
+        rectBar.x = rectLightCircle.x;
+        rectBar.y = rectLightCircle.y + rectLightCircle.h;
+        rectBar.w = rectLightCircle.w;
+        rectBar.h = WINDOW_HEIGHT - rectBar.y;
+        SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
+
+
         SDL_RenderPresent(rend);
 
         // wait 1/FPSth of a second
-        SDL_Delay(1000/FPS);
+        clock_t end = clock();
+        double frameTime = (double) (end - start) / CLOCKS_PER_SEC;
+        frameTime *= 1000; // seconds to milliseconds
+        double waitTime = (1000 - frameTime > 0) ? 1000 - frameTime : 0;
+        SDL_Delay(waitTime/FPS);
     }
-    // printf("\n\nYOU DIED! Score: %d\n", score);
-    // SDL_Delay(3000);
+    printf("\n\nYOU DIED! Score: %d\n", score);
+    SDL_Delay(2000);
     
     // clean up resources before exiting
     SDL_DestroyTexture(texPlayer);
