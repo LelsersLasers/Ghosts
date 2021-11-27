@@ -8,16 +8,16 @@
 #define WINDOW_HEIGHT (480)
 
 // speed in pixels/second
-#define SPEED (200)
-#define FPS (60)
+#define SPEED (150.0)
+#define GHOST_SPEED (0.6)
+
+#define LIGHT_POWER (100)
+#define MIN_LIGHT_POWER (7.0)
+
+#define FPS (60.0)
 
 
 int collides(SDL_Rect rect1, SDL_Rect rect2) {
-    // if (this.pt.x < boxOther.pt.x + boxOther.w && boxOther.pt.x < this.pt.x + this.w) {
-        //     if (this.pt.y < boxOther.pt.y + boxOther.h && boxOther.pt.y < this.pt.y + this.h) {
-        //         return true;
-        //     }
-        // }
     if (rect1.x < rect2.x + rect2.w && rect2.x < rect1.x + rect1.w) {
         if (rect1.y < rect2.y + rect2.h && rect2.y < rect1.y + rect1.h) {
             return 1;
@@ -153,7 +153,6 @@ int main(void) {
 
 
     // LIGHTING
-    int lightPower = 100;
     // load the image into memory using SDL_image library function
     SDL_Surface* surfBlack = IMG_Load("resources/black.png");
     if (!surfBlack) {
@@ -215,8 +214,8 @@ int main(void) {
     SDL_Rect rectLightCircle;
     // get and scale the dimensions of texture
     SDL_QueryTexture(texLightCircle, NULL, NULL, &rectLightCircle.w, &rectLightCircle.h);
-    rectLightCircle.w = lightPower * 2;
-    rectLightCircle.h = lightPower * 2;
+    rectLightCircle.w = LIGHT_POWER * 2;
+    rectLightCircle.h = LIGHT_POWER * 2;
     // rectLightCircle.x = rectPlayer.x;
     // rectLightCircle.y = rectPlayer.y;
 
@@ -286,18 +285,18 @@ int main(void) {
             int difY = posPlayer[1] - posGhostsArr[i][1];
             if (abs(difX) > abs(difY)) {
                 if (difX > 0) { // on right
-                    posGhostsArr[i][0] += SPEED/2 * 1/FPS;
+                    posGhostsArr[i][0] += SPEED * GHOST_SPEED * 1/FPS;
                 }
                 else {
-                    posGhostsArr[i][0] -= SPEED/2 * 1/FPS;
+                    posGhostsArr[i][0] -= SPEED * GHOST_SPEED * 1/FPS;
                 }
             }
             else {
                 if (difY > 0) { // on the down
-                    posGhostsArr[i][1] += SPEED/2 * 1/FPS;
+                    posGhostsArr[i][1] += SPEED * GHOST_SPEED * 1/FPS;
                 }
                 else {
-                    posGhostsArr[i][1] -= SPEED/2 * 1/FPS;
+                    posGhostsArr[i][1] -= SPEED * GHOST_SPEED * 1/FPS;
                 }
             }
             rectGhosts[i].x = (int) posGhostsArr[i][0];
@@ -338,23 +337,20 @@ int main(void) {
         SDL_RenderCopy(rend, texCoin, NULL, &rectCoin);
 
         // LIGHTING
-        int minLight = 6;
-        float topLeft[2] = {center[0] - lightPower - 4, center[1] - lightPower - 4};
-        float bottomRight[2] = {center[0] + lightPower + 4, center[1] + lightPower + 4};
+        float topLeft[2] = {center[0] - LIGHT_POWER - 4, center[1] - LIGHT_POWER - 4};
+        float bottomRight[2] = {center[0] + LIGHT_POWER + 4, center[1] + LIGHT_POWER + 4};
         for (int x = topLeft[0]; x < bottomRight[0]; x += 2) {
             for (int y = topLeft[1]; y < bottomRight[1]; y += 2) {
                 float distFromCenter = sqrt((center[0] - x) * (center[0] - x) + (center[1] - y) * (center[1] - y));
-                // if (distFromCenter < lightPower + 4) {
-                    float tempLightPower = distFromCenter - lightPower;
-                    tempLightPower = tempLightPower * rand()/RAND_MAX;
-                    // printf("%f\n", tempLightPower);
+                float tempLightPower = distFromCenter - LIGHT_POWER;
+                tempLightPower = tempLightPower * rand()/RAND_MAX;
+                // printf("%f\n", tempLightPower);
 
-                    if (tempLightPower > -minLight) {
-                        rectBlack.x = x;
-                        rectBlack.y = y;
-                        SDL_RenderCopy(rend, texBlack, NULL, &rectBlack);
-                    }
-                // }
+                if (tempLightPower > -MIN_LIGHT_POWER) {
+                    rectBlack.x = x;
+                    rectBlack.y = y;
+                    SDL_RenderCopy(rend, texBlack, NULL, &rectBlack);
+                }
             }
         }
 
@@ -368,21 +364,18 @@ int main(void) {
         rectBar.w = rectLightCircle.x;
         rectBar.h = WINDOW_HEIGHT;
         SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
-
         //right
         rectBar.x = rectLightCircle.x + rectLightCircle.w;
         rectBar.y = 0;
         rectBar.w = WINDOW_WIDTH - rectBar.x;
         rectBar.h = WINDOW_HEIGHT;
         SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
-
         //top
         rectBar.x = rectLightCircle.x;
         rectBar.y = 0;
         rectBar.w = rectLightCircle.w;
         rectBar.h = rectLightCircle.y;
         SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
-
         //bottom
         rectBar.x = rectLightCircle.x;
         rectBar.y = rectLightCircle.y + rectLightCircle.h;
