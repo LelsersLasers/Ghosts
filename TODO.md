@@ -13,7 +13,6 @@
   - Scaled up to whatever the screen size is
 - Lighting
   - Matrix dither
-  - No 'passive flicking'
   - Ghosts emit light?
   - Treasure emits light?
 - Spirit animations
