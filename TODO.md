@@ -9,7 +9,7 @@
   - AI Have Swords? (+ 'Lunge' ability?)
   - Player 'Sprint' ability?
 - Window Scale
-  - Blocks of 192:108
+  - Blocks of 192:108 (16/9)
   - Scaled up to whatever the screen size is
 - Lighting
   - Matrix dither
@@ -17,3 +17,6 @@
   - Treasure emits light?
 - Spirit animations
   - Texture atlas
+
+- Clean textures better
+- Functionize?
