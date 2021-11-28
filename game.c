@@ -57,7 +57,7 @@ int main(void) {
 
     // PLAYER
     // load the image into memory using SDL_image library function
-    SDL_Surface* surfPlayer = IMG_Load("resources/playerDown-10x11-2x2.png");
+    SDL_Surface* surfPlayer = IMG_Load("resources/player-10x11-4x2.png");
     if (!surfPlayer) {
         printf("error creating surface\n");
         SDL_DestroyRenderer(rend);
@@ -86,8 +86,11 @@ int main(void) {
     SDL_Rect rectSourceAnimation;
     rectSourceAnimation.w = 10;
     rectSourceAnimation.h = 11;
-    int posSourceAnimation[4][2] = {
-        {0, 0}, {10, 0}, {0, 11}, {10, 11}
+    int posSourceAnimation[4][4][2] = { // [dir][animationPlayer][x/y]
+        {{0, 0}, {10, 0}, {20, 0}, {30, 0}}, // down
+        {{0, 11}, {10, 11}, {20, 11}, {30, 11}}, // up
+        {{0, 0}, {10, 0}, {20, 0}, {30, 0}}, // left
+        {{0, 11}, {10, 11}, {20, 11}, {30, 11}} // right
     };
 
 
@@ -268,7 +271,7 @@ int main(void) {
     int score = 0;
     printf("Score: %d\n", score);
     // player direction
-    int dir = 0; // 1, 2, 3, 4 :: up, down, left, right
+    int dir = 0; // 0, 1, 2, 3 :: down, up, left, right
 
     // set to 1 when window close button is pressed
     int closeRequested = 0;
@@ -291,15 +294,13 @@ int main(void) {
                             dir = 1;
                             break;
                         case SDL_SCANCODE_S:
-                            dir = 2;
+                            dir = 0;
                             break;
                         case SDL_SCANCODE_A:
-                            dir = 3;
+                            dir = 2;
                             break;
                         case SDL_SCANCODE_D:
-                            dir = 4;
-                            // animationPlayer++;
-                            // if (animationPlayer > 3) animationPlayer = 0;
+                            dir = 3;
                             break;
                     }
                     break;
@@ -446,8 +447,8 @@ int main(void) {
         rectBar.h = WINDOW_HEIGHT - rectBar.y;
         SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
 
-        rectSourceAnimation.x = posSourceAnimation[animationPlayer][0];
-        rectSourceAnimation.y = posSourceAnimation[animationPlayer][1];
+        rectSourceAnimation.x = posSourceAnimation[dir][animationPlayer][0];
+        rectSourceAnimation.y = posSourceAnimation[dir][animationPlayer][1];
         SDL_RenderCopy(rend, texPlayer, &rectSourceAnimation, &rectPlayer);
 
         float angle = atan((posCoin[1] - posPlayer[1])/(posCoin[0] - posPlayer[0]));
