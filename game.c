@@ -15,7 +15,6 @@
 #define SPEED (150.0)
 #define GHOST_SPEED (0.50)
 
-// #define LIGHT_POWER (120)
 #define MIN_LIGHT_POWER (7.0)
 
 #define FPS (60.0)
@@ -254,11 +253,8 @@ int main(void) {
     rectLight.w = PIXEL_SIZE;
     rectLight.h = PIXEL_SIZE;
 
-    int lights[4][3] = {
-        {120, rectPlayer.x, rectPlayer.y}, // power, x,y
-        {45, rectGhosts[0].x, rectGhosts[0].y},
-        {45, rectGhosts[1].x, rectGhosts[1].y},
-        {45, rectGhosts[2].x, rectGhosts[2].y}
+    int lights[1][3] = { // in case I want more later
+        {144, rectPlayer.x, rectPlayer.y} // power, x, y
     };
 
 
@@ -439,30 +435,6 @@ int main(void) {
         rectBar.w = lights[0][0] * 2;
         rectBar.h = WINDOW_HEIGHT - rectBar.y;
         SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
-
-        for (int i = 1; i < 4; i++) {
-            lights[i][1] = rectGhosts[i-1].x + rectGhosts[i-1].w/2;
-            lights[i][2] = rectGhosts[i-1].y + rectGhosts[i-1].h/2;
-
-            topLeft[0] = lights[i][1] - lights[i][0] - PIXEL_SIZE;
-            topLeft[1] = lights[i][2] - lights[i][0] - PIXEL_SIZE;
-            bottomRight[0] = lights[i][1] + lights[i][0] + PIXEL_SIZE;
-            bottomRight[1] = lights[i][2] + lights[i][0] + PIXEL_SIZE;
-            for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
-                for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
-                    float distFromCenter = sqrt((lights[i][1] - x) * (lights[i][1] - x) + (lights[i][2] - y) * (lights[i][2] - y));
-                    double r = (double)rand()/(double)RAND_MAX;
-                    float tempLight = lights[i][0] * (0.5 + r);
-                    float tempLightPower = distFromCenter - tempLight;
-                    tempLightPower = tempLightPower * rand()/RAND_MAX;
-                    if (tempLightPower < -MIN_LIGHT_POWER) {
-                        rectLight.x = x;
-                        rectLight.y = y;
-                        SDL_RenderCopy(rend, texLight, NULL, &rectLight);
-                    }
-                }
-            }
-        }
 
         SDL_RenderCopy(rend, texPlayer, NULL, &rectPlayer);
 

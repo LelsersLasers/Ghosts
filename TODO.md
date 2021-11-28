@@ -13,8 +13,6 @@
   - Scaled up to whatever the screen size is
 - Lighting
   - Matrix dither
-  - Ghosts emit light?
-  - Treasure emits light?
 - Spirit animations
   - Texture atlas
 
