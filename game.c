@@ -128,6 +128,8 @@ int main(void) {
     SDL_Surface* surfCompass = IMG_Load("resources/compass.jpg");
     if (!surfCompass) {
         printf("error creating surface\n");
+        SDL_DestroyTexture(texPlayer);
+        SDL_DestroyTexture(texGhost);
         SDL_DestroyRenderer(rend);
         SDL_DestroyWindow(win);
         SDL_Quit();
@@ -138,6 +140,8 @@ int main(void) {
     SDL_FreeSurface(surfCompass);
     if (!texCompass) {
         printf("error creating texture: %s\n", SDL_GetError());
+        SDL_DestroyTexture(texPlayer);
+        SDL_DestroyTexture(texGhost);
         SDL_DestroyRenderer(rend);
         SDL_DestroyWindow(win);
         SDL_Quit();
@@ -158,6 +162,7 @@ int main(void) {
         printf("error creating surface\n");
         SDL_DestroyTexture(texPlayer);
         SDL_DestroyTexture(texGhost);
+        SDL_DestroyTexture(texCompass);
         SDL_DestroyRenderer(rend);
         SDL_DestroyWindow(win);
         SDL_Quit();
@@ -170,6 +175,7 @@ int main(void) {
         printf("error creating texture: %s\n", SDL_GetError());
         SDL_DestroyTexture(texPlayer);
         SDL_DestroyTexture(texGhost);
+        SDL_DestroyTexture(texCompass);
         SDL_DestroyRenderer(rend);
         SDL_DestroyWindow(win);
         SDL_Quit();
@@ -191,6 +197,7 @@ int main(void) {
         printf("error creating surface\n");
         SDL_DestroyTexture(texPlayer);
         SDL_DestroyTexture(texGhost);
+        SDL_DestroyTexture(texCompass);
         SDL_DestroyTexture(texCoin);
         SDL_DestroyRenderer(rend);
         SDL_DestroyWindow(win);
@@ -204,6 +211,7 @@ int main(void) {
         printf("error creating texture: %s\n", SDL_GetError());
         SDL_DestroyTexture(texPlayer);
         SDL_DestroyTexture(texGhost);
+        SDL_DestroyTexture(texCompass);
         SDL_DestroyTexture(texCoin);
         SDL_DestroyRenderer(rend);
         SDL_DestroyWindow(win);
@@ -223,7 +231,9 @@ int main(void) {
         printf("error creating surface\n");
         SDL_DestroyTexture(texPlayer);
         SDL_DestroyTexture(texGhost);
+        SDL_DestroyTexture(texCompass);
         SDL_DestroyTexture(texCoin);
+        SDL_DestroyTexture(texBlack);
         SDL_DestroyRenderer(rend);
         SDL_DestroyWindow(win);
         SDL_Quit();
@@ -236,7 +246,9 @@ int main(void) {
         printf("error creating texture: %s\n", SDL_GetError());
         SDL_DestroyTexture(texPlayer);
         SDL_DestroyTexture(texGhost);
+        SDL_DestroyTexture(texCompass);
         SDL_DestroyTexture(texCoin);
+        SDL_DestroyTexture(texBlack);
         SDL_DestroyRenderer(rend);
         SDL_DestroyWindow(win);
         SDL_Quit();
@@ -447,9 +459,9 @@ int main(void) {
     // clean up resources before exiting
     SDL_DestroyTexture(texPlayer);
     SDL_DestroyTexture(texGhost);
+    SDL_DestroyTexture(texCompass);
     SDL_DestroyTexture(texCoin);
-    SDL_DestroyTexture(texLightCircle);
-    // SDL_DestroyTexture(texLight);
+    SDL_DestroyTexture(texBlack);
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
     SDL_Quit();
