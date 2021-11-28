@@ -352,11 +352,11 @@ int main(void) {
             score += 1;
             printf("Score: %d\n", score);
         }
-        // for (int i = 0; i < 3; i++) {
-        //     if (collides(rectPlayer, rectGhosts[i])) {
-        //         closeRequested = 1;
-        //     }
-        // }
+        for (int i = 0; i < 3; i++) {
+            if (collides(rectPlayer, rectGhosts[i])) {
+                closeRequested = 1;
+            }
+        }
 
         rectCoin.x = (int) posCoin[0];
         rectCoin.y = (int) posCoin[1];
