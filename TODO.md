@@ -1,10 +1,20 @@
 # TODO
 - Colors
-  - Shades of White/Black only?
-  - Or maybe just: white, black, grey?
+  - White (#ffffff), Black (#000000), and Grey (49,49,49/#313131)
+  - Sprites are just white/black, lighting is grey
 - Flashlight instead of lamp?
   - Point towards mouse?
 - Combat?
   - Laser rifle fire towards mouse?
   - AI Have Swords? (+ 'Lunge' ability?)
   - Player 'Sprint' ability?
+- Window Scale
+  - Blocks of 192:108
+  - Scaled up to whatever the screen size is
+- Lighting
+  - Matrix dither
+  - No 'passive flicking'
+  - Ghosts emit light?
+  - Treasure emits light?
+- Spirit animations
+  - Texture atlas
