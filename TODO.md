@@ -1,4 +1,5 @@
 # TODO
+- Compass pointing towards coin?
 - Colors
   - Shades of White/Black only?
   - Or maybe just: white, black, grey?

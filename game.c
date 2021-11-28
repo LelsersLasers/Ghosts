@@ -3,6 +3,9 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_image.h>
 #include <time.h>
+#include <math.h>
+
+#define PI (3.14159265358979323846)
 
 #define WINDOW_WIDTH (640)
 #define WINDOW_HEIGHT (480)
@@ -120,6 +123,35 @@ int main(void) {
         rectGhosts[i] = rectGhost;
     }
 
+    // compass
+    // load the image into memory using SDL_image library function
+    SDL_Surface* surfCompass = IMG_Load("resources/compass.jpg");
+    if (!surfCompass) {
+        printf("error creating surface\n");
+        SDL_DestroyRenderer(rend);
+        SDL_DestroyWindow(win);
+        SDL_Quit();
+        return 1;
+    }
+    // load the image data into the graphics hardware's memory
+    SDL_Texture* texCompass = SDL_CreateTextureFromSurface(rend, surfCompass);
+    SDL_FreeSurface(surfCompass);
+    if (!texCompass) {
+        printf("error creating texture: %s\n", SDL_GetError());
+        SDL_DestroyRenderer(rend);
+        SDL_DestroyWindow(win);
+        SDL_Quit();
+        return 1;
+    }
+    // struct to hold the position and size of the sprite
+    SDL_Rect rectCompass;
+    // get and scale the dimensions of texture
+    SDL_QueryTexture(texCompass, NULL, NULL, &rectCompass.w, &rectCompass.h);
+    rectCompass.x = 0;
+    rectCompass.y = 20;
+    rectCompass.w = 60;
+    rectCompass.h = (int) rectCompass.w/3;
+
 
     SDL_Surface* surfCoin = IMG_Load("resources/coin.png");
     if (!surfCoin) {
@@ -226,7 +258,7 @@ int main(void) {
     int closeRequested = 0;
     
     // animation loop
-    while (!closeRequested) {
+    while (closeRequested == 0) {
         clock_t start = clock();
 
         // process events
@@ -234,7 +266,7 @@ int main(void) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
-                    closeRequested = 1;
+                    closeRequested = 2;
                     break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.scancode) {
@@ -388,6 +420,12 @@ int main(void) {
         rectBar.h = WINDOW_HEIGHT - rectBar.y;
         SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
 
+        float angle = atan((posCoin[1] - posPlayer[1])/(posCoin[0] - posPlayer[0]));
+        angle = (angle * 180) / PI;
+        if (posCoin[0] - posPlayer[0] < 0) angle = angle + 180;
+
+        SDL_RenderCopyEx(rend, texCompass, NULL, &rectCompass, angle, NULL, SDL_FLIP_NONE);
+
 
         SDL_RenderPresent(rend);
 
@@ -398,8 +436,13 @@ int main(void) {
         double waitTime = (1000 - frameTime > 0) ? 1000 - frameTime : 0;
         SDL_Delay(waitTime/FPS);
     }
-    printf("\n\nYOU DIED! Score: %d\n", score);
-    SDL_Delay(2000);
+    if (closeRequested == 1) {
+        printf("\n\nYOU DIED! Score: %d\n", score);
+        SDL_Delay(2000);   
+    }
+    else {
+        printf("\n\nGame Exited! Score: %d\n", score);
+    }
     
     // clean up resources before exiting
     SDL_DestroyTexture(texPlayer);
