@@ -7,8 +7,9 @@
 
 #define PI (3.14159265358979323846)
 
-#define WINDOW_WIDTH (640)
-#define WINDOW_HEIGHT (480)
+#define WINDOW_WIDTH (960)
+#define WINDOW_HEIGHT (540)
+#define PIXEL_SIZE (960/192.0)
 
 // speed in pixels/second
 #define SPEED (150.0)
@@ -222,8 +223,8 @@ int main(void) {
     SDL_Rect rectBlack;
     // get and scale the dimensions of texture
     SDL_QueryTexture(texBlack, NULL, NULL, &rectBlack.w, &rectBlack.h);
-    rectBlack.w = 2;
-    rectBlack.h = 2;
+    rectBlack.w = PIXEL_SIZE;
+    rectBlack.h = PIXEL_SIZE;
 
 
     SDL_Surface* surfLightCircle = IMG_Load("resources/lightCircle.jpeg");
@@ -387,10 +388,10 @@ int main(void) {
         SDL_RenderCopy(rend, texCoin, NULL, &rectCoin);
 
         // LIGHTING, place the darkness sqaures
-        float topLeft[2] = {center[0] - LIGHT_POWER - 4, center[1] - LIGHT_POWER - 4};
-        float bottomRight[2] = {center[0] + LIGHT_POWER + 4, center[1] + LIGHT_POWER + 4};
-        for (int x = topLeft[0]; x < bottomRight[0]; x += 2) {
-            for (int y = topLeft[1]; y < bottomRight[1]; y += 2) {
+        float topLeft[2] = {center[0] - LIGHT_POWER - PIXEL_SIZE, center[1] - LIGHT_POWER - PIXEL_SIZE};
+        float bottomRight[2] = {center[0] + LIGHT_POWER + PIXEL_SIZE, center[1] + LIGHT_POWER + PIXEL_SIZE};
+        for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
+            for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
                 float distFromCenter = sqrt((center[0] - x) * (center[0] - x) + (center[1] - y) * (center[1] - y));
                 float tempLightPower = distFromCenter - LIGHT_POWER;
                 tempLightPower = tempLightPower * rand()/RAND_MAX;
