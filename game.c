@@ -57,7 +57,7 @@ int main(void) {
 
     // PLAYER
     // load the image into memory using SDL_image library function
-    SDL_Surface* surfPlayer = IMG_Load("resources/player-10x11-4x2.png");
+    SDL_Surface* surfPlayer = IMG_Load("resources/player-10x11-4x4.png");
     if (!surfPlayer) {
         printf("error creating surface\n");
         SDL_DestroyRenderer(rend);
@@ -89,8 +89,8 @@ int main(void) {
     int posSourceAnimation[4][4][2] = { // [dir][animationPlayer][x/y]
         {{0, 0}, {10, 0}, {20, 0}, {30, 0}}, // down
         {{0, 11}, {10, 11}, {20, 11}, {30, 11}}, // up
-        {{0, 0}, {10, 0}, {20, 0}, {30, 0}}, // left
-        {{0, 11}, {10, 11}, {20, 11}, {30, 11}} // right
+        {{0, 22}, {10, 22}, {20, 22}, {30, 22}}, // right
+        {{0, 33}, {10, 33}, {20, 33}, {30, 33}} // left
     };
 
 
@@ -271,7 +271,7 @@ int main(void) {
     int score = 0;
     printf("Score: %d\n", score);
     // player direction
-    int dir = 0; // 0, 1, 2, 3 :: down, up, left, right
+    int dir = 0; // 0, 1, 2, 3 :: down, up, right, left
 
     // set to 1 when window close button is pressed
     int closeRequested = 0;
@@ -297,10 +297,10 @@ int main(void) {
                             dir = 0;
                             break;
                         case SDL_SCANCODE_A:
-                            dir = 2;
+                            dir = 3;
                             break;
                         case SDL_SCANCODE_D:
-                            dir = 3;
+                            dir = 2;
                             break;
                     }
                     break;
@@ -312,13 +312,13 @@ int main(void) {
             case 1:
                 posPlayer[1] -= SPEED / FPS;
                 break;
-            case 2:
+            case 0:
                 posPlayer[1] += SPEED / FPS;
                 break;
             case 3:
                 posPlayer[0] -= SPEED / FPS;
                 break;
-            case 4:
+            case 2:
                 posPlayer[0] += SPEED / FPS;
                 break;
         }
