@@ -9,7 +9,7 @@
 
 // speed in pixels/second
 #define SPEED (150.0)
-#define GHOST_SPEED (0.6)
+#define GHOST_SPEED (0.50)
 
 #define LIGHT_POWER (100)
 #define MIN_LIGHT_POWER (7.0)
@@ -34,7 +34,7 @@ int main(void) {
         return 1;
     }
 
-    SDL_Window* win = SDL_CreateWindow("Pac-ish", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+    SDL_Window* win = SDL_CreateWindow("Ghosts", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     if (!win) {
         printf("error creating window: %s\n", SDL_GetError());
         SDL_Quit();
@@ -216,8 +216,6 @@ int main(void) {
     SDL_QueryTexture(texLightCircle, NULL, NULL, &rectLightCircle.w, &rectLightCircle.h);
     rectLightCircle.w = LIGHT_POWER * 2;
     rectLightCircle.h = LIGHT_POWER * 2;
-    // rectLightCircle.x = rectPlayer.x;
-    // rectLightCircle.y = rectPlayer.y;
 
     int score = 0;
     printf("Score: %d\n", score);
@@ -279,10 +277,19 @@ int main(void) {
         if (posPlayer[0] >= WINDOW_WIDTH - rectPlayer.w) posPlayer[0] = WINDOW_WIDTH - rectPlayer.w;
         if (posPlayer[1] >= WINDOW_HEIGHT - rectPlayer.h) posPlayer[1] = WINDOW_HEIGHT - rectPlayer.h;
 
-        // move ghost
+        // move ghosts 1 and 2, have them chase the player and 3 zone near the coin
         for (int i = 0; i < 3; i++) {
-            int difX = posPlayer[0] - posGhostsArr[i][0];
-            int difY = posPlayer[1] - posGhostsArr[i][1];
+            float difX = posPlayer[0] - posGhostsArr[i][0];
+            float difY = posPlayer[1] - posGhostsArr[i][1];
+            float dist = sqrt(difX * difX + difY * difY);
+            if (i == 0 || i == 1 || dist < LIGHT_POWER - 10) {}
+            else {
+                difX = posCoin[0] - posPlayer[0];
+                difY = posCoin[1] - posPlayer[1];
+                float target[2] = {posCoin[0] - difX/3, posCoin[1] - difY/3};
+                difX = target[0] - posGhostsArr[i][0];
+                difY = target[1] - posGhostsArr[i][1];
+            }
             if (abs(difX) > abs(difY)) {
                 if (difX > 0) { // on right
                     posGhostsArr[i][0] += SPEED * GHOST_SPEED * 1/FPS;
@@ -304,7 +311,6 @@ int main(void) {
         }
 
         // set the player positions in the struct
-        
         rectPlayer.x = (int) posPlayer[0];
         rectPlayer.y = (int) posPlayer[1];
 
@@ -314,11 +320,11 @@ int main(void) {
             score += 1;
             printf("Score: %d\n", score);
         }
-        for (int i = 0; i < 3; i++) {
-            if (collides(rectPlayer, rectGhosts[i])) {
-                closeRequested = 1;
-            }
-        }
+        // for (int i = 0; i < 3; i++) {
+        //     if (collides(rectPlayer, rectGhosts[i])) {
+        //         closeRequested = 1;
+        //     }
+        // }
 
         rectCoin.x = (int) posCoin[0];
         rectCoin.y = (int) posCoin[1];
@@ -336,7 +342,7 @@ int main(void) {
         }
         SDL_RenderCopy(rend, texCoin, NULL, &rectCoin);
 
-        // LIGHTING
+        // LIGHTING, place the darkness sqaures
         float topLeft[2] = {center[0] - LIGHT_POWER - 4, center[1] - LIGHT_POWER - 4};
         float bottomRight[2] = {center[0] + LIGHT_POWER + 4, center[1] + LIGHT_POWER + 4};
         for (int x = topLeft[0]; x < bottomRight[0]; x += 2) {
@@ -344,7 +350,6 @@ int main(void) {
                 float distFromCenter = sqrt((center[0] - x) * (center[0] - x) + (center[1] - y) * (center[1] - y));
                 float tempLightPower = distFromCenter - LIGHT_POWER;
                 tempLightPower = tempLightPower * rand()/RAND_MAX;
-                // printf("%f\n", tempLightPower);
 
                 if (tempLightPower > -MIN_LIGHT_POWER) {
                     rectBlack.x = x;

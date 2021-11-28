@@ -1,6 +1,4 @@
 # TODO
-- Ghost AI
-  - 1 'Guard' the coin
 - Colors
   - Shades of White/Black only?
   - Or maybe just: white, black, grey?
