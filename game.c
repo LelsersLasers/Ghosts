@@ -14,7 +14,7 @@
 #define SPEED (150.0)
 #define GHOST_SPEED (0.50)
 
-#define LIGHT_POWER (100)
+#define LIGHT_POWER (120)
 #define MIN_LIGHT_POWER (7.0)
 
 #define FPS (60.0)
@@ -114,8 +114,8 @@ int main(void) {
         SDL_Rect rectGhost;
         // get and scale the dimensions of texture
         SDL_QueryTexture(texGhost, NULL, NULL, &rectGhost.w, &rectGhost.h);
-        rectGhost.w = 30;
-        rectGhost.h = 30;
+        rectGhost.w = 27;
+        rectGhost.h = 33;
         posGhostsArr[i][0] = rand() % (WINDOW_WIDTH - rectGhost.w); // x
         posGhostsArr[i][1] = rand() % (WINDOW_HEIGHT - rectGhost.h); // y
         rectGhost.x = (int) posGhostsArr[i][0];
