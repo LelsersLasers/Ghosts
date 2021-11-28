@@ -1,6 +1,7 @@
 # TODO
 - Colors
   - White (#ffffff), Black (#000000), and Grey (49,49,49/#313131)
+    - Transparent: #ff00e5
   - Sprites are just white/black, lighting is grey
 - Flashlight instead of lamp?
   - Point towards mouse?
@@ -15,6 +16,7 @@
   - Matrix dither
 - Spirit animations
   - Texture atlas
+  - Trasparent backgrounds, not black
 
 - Clean textures better
 - Functionize?

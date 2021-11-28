@@ -57,7 +57,7 @@ int main(void) {
 
     // PLAYER
     // load the image into memory using SDL_image library function
-    SDL_Surface* surfPlayer = IMG_Load("resources/pacman.png");
+    SDL_Surface* surfPlayer = IMG_Load("resources/playerDown-10x11-2x2.png");
     if (!surfPlayer) {
         printf("error creating surface\n");
         SDL_DestroyRenderer(rend);
@@ -78,10 +78,17 @@ int main(void) {
     // struct to hold the position and size of the sprite
     SDL_Rect rectPlayer;
     // get and scale the dimensions of texture
-    SDL_QueryTexture(texPlayer, NULL, NULL, &rectPlayer.w, &rectPlayer.h);
-    rectPlayer.w = 30;
-    rectPlayer.h = 30;
+    // SDL_QueryTexture(texPlayer, NULL, NULL, &rectPlayer.w, &rectPlayer.h);
+    rectPlayer.w = 30; // 10 * 3
+    rectPlayer.h = 33; // 11 * 3
     float posPlayer[2] = {(WINDOW_WIDTH - rectPlayer.w) / 2, (WINDOW_HEIGHT - rectPlayer.h) / 2}; // {x, y}
+    int animationPlayer = 0; // 0 - 3
+    SDL_Rect rectSourceAnimation;
+    rectSourceAnimation.w = 10;
+    rectSourceAnimation.h = 11;
+    int posSourceAnimation[4][2] = {
+        {0, 0}, {10, 0}, {0, 11}, {10, 11}
+    };
 
 
     // GHOSTS
@@ -265,6 +272,7 @@ int main(void) {
 
     // set to 1 when window close button is pressed
     int closeRequested = 0;
+    int frame = 0;
     
     // animation loop
     while (closeRequested == 0) {
@@ -290,6 +298,8 @@ int main(void) {
                             break;
                         case SDL_SCANCODE_D:
                             dir = 4;
+                            // animationPlayer++;
+                            // if (animationPlayer > 3) animationPlayer = 0;
                             break;
                     }
                     break;
@@ -436,7 +446,9 @@ int main(void) {
         rectBar.h = WINDOW_HEIGHT - rectBar.y;
         SDL_RenderCopy(rend, texBlack, NULL, &rectBar);
 
-        SDL_RenderCopy(rend, texPlayer, NULL, &rectPlayer);
+        rectSourceAnimation.x = posSourceAnimation[animationPlayer][0];
+        rectSourceAnimation.y = posSourceAnimation[animationPlayer][1];
+        SDL_RenderCopy(rend, texPlayer, &rectSourceAnimation, &rectPlayer);
 
         float angle = atan((posCoin[1] - posPlayer[1])/(posCoin[0] - posPlayer[0]));
         angle = (angle * 180) / PI;
@@ -444,8 +456,12 @@ int main(void) {
 
         SDL_RenderCopyEx(rend, texCompass, NULL, &rectCompass, angle, NULL, SDL_FLIP_NONE);
 
-
         SDL_RenderPresent(rend);
+
+        if (frame % 5 == 0) {
+            animationPlayer++;
+            if (animationPlayer > 3) animationPlayer = 0;
+        }
 
         // wait 1/FPSth of a second
         clock_t end = clock();
@@ -453,6 +469,8 @@ int main(void) {
         frameTime *= 1000; // seconds to milliseconds
         double waitTime = (1000 - frameTime > 0) ? 1000 - frameTime : 0;
         SDL_Delay(waitTime/FPS);
+
+        frame++;
     }
     if (closeRequested == 1) {
         printf("\n\nYOU DIED! Score: %d\n", score);
