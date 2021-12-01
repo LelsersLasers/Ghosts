@@ -266,6 +266,10 @@ int main(void) {
     int lights[1][3] = { // in case I want more later
         {144, rectPlayer.x, rectPlayer.y} // power, x, y
     };
+    float ditherMatrix[2][2] = {
+        {-0.25, 0.25},
+        {0.5, 0}
+    };
 
 
     int score = 0;
@@ -391,6 +395,7 @@ int main(void) {
         // LIGHTING, place the light sqaures
         float topLeft[2] = {lights[0][1] - lights[0][0] - PIXEL_SIZE, lights[0][2] - lights[0][0] - PIXEL_SIZE};
         float bottomRight[2] = {lights[0][1] + lights[0][0] + PIXEL_SIZE, lights[0][2] + lights[0][0] + PIXEL_SIZE};
+        int matrixPos[2] = {0, 0}; 
         for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
             for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
                 float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
@@ -401,25 +406,38 @@ int main(void) {
                     rectLight.y = y;
                     SDL_RenderCopy(rend, texLight, NULL, &rectLight);
                 }
+
+                if (matrixPos[0]) {
+                    matrixPos[0] = 0;
+                }
+                else {
+                    matrixPos[0] = 1;
+                }
+            }
+            if (matrixPos[1]) {
+                matrixPos[1] = 0;
+            }
+            else {
+                matrixPos[1] = 1;
             }
         }
         for (int i = 0; i < 3; i++) {
             SDL_RenderCopy(rend, texGhost, NULL, &rectGhosts[i]);
         }
         SDL_RenderCopy(rend, texCoin, NULL, &rectCoin);
-        for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
-            for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
-                float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
-                float tempLightPower = distFromCenter - lights[0][0];
-                tempLightPower = tempLightPower * rand()/RAND_MAX;
-                if (tempLightPower < -MIN_LIGHT_POWER) {}
-                else {
-                    rectLight.x = x;
-                    rectLight.y = y;
-                    SDL_RenderCopy(rend, texBlack, NULL, &rectLight);
-                }
-            }
-        }
+        // for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
+        //     for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
+        //         float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
+        //         float tempLightPower = distFromCenter - lights[0][0];
+        //         tempLightPower = tempLightPower * rand()/RAND_MAX;
+        //         if (tempLightPower < -MIN_LIGHT_POWER) {}
+        //         else {
+        //             rectLight.x = x;
+        //             rectLight.y = y;
+        //             SDL_RenderCopy(rend, texBlack, NULL, &rectLight);
+        //         }
+        //     }
+        // }
 
         SDL_Rect rectBar;
         //left
