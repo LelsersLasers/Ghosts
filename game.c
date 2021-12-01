@@ -400,7 +400,8 @@ int main(void) {
             for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
                 float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
                 float tempLightPower = distFromCenter - lights[0][0];
-                tempLightPower = tempLightPower * rand()/RAND_MAX;
+                // tempLightPower = tempLightPower * rand()/RAND_MAX;
+                
                 if (tempLightPower < -MIN_LIGHT_POWER) {
                     rectLight.x = x;
                     rectLight.y = y;
