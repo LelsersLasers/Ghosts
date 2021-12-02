@@ -77,8 +77,10 @@ int main(void) {
     SDL_Rect rectPlayer;
     // get and scale the dimensions of texture
     // SDL_QueryTexture(texPlayer, NULL, NULL, &rectPlayer.w, &rectPlayer.h);
-    rectPlayer.w = 30; // 10 * 3
-    rectPlayer.h = 33; // 11 * 3
+    // rectPlayer.w = 10 * PIXEL_SIZE;
+    // rectPlayer.h = 11 * PIXEL_SIZE;
+    rectPlayer.w = 30;
+    rectPlayer.h = 33;
     float posPlayer[2] = {(WINDOW_WIDTH - rectPlayer.w) / 2, (WINDOW_HEIGHT - rectPlayer.h) / 2}; // {x, y}
     int animationPlayer = 0; // 0 - 3
     SDL_Rect rectSourceAnimation;
@@ -394,13 +396,14 @@ int main(void) {
         float topLeft[2] = {lights[0][1] - lights[0][0] - PIXEL_SIZE, lights[0][2] - lights[0][0] - PIXEL_SIZE};
         float bottomRight[2] = {lights[0][1] + lights[0][0] + PIXEL_SIZE, lights[0][2] + lights[0][0] + PIXEL_SIZE};
         int matrixPos[2] = {0, 0}; 
-        int r = rand() % 7; // flicker
+        double r = (double)rand()/RAND_MAX; // flicker
+        r = r * 0.1 + 0.9;
         for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
             for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
                 float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
-                float tempLightPower = ditherMatrix[matrixPos[0]][matrixPos[1]] * lights[0][0];
+                float tempLightPower = ditherMatrix[matrixPos[0]][matrixPos[1]] * lights[0][0] * r;
                 
-                if (tempLightPower - distFromCenter > -r) {
+                if (tempLightPower - distFromCenter > 0) {
                     rectLight.x = x;
                     rectLight.y = y;
                     SDL_RenderCopy(rend, texLight, NULL, &rectLight);
@@ -425,16 +428,14 @@ int main(void) {
         }
         SDL_RenderCopy(rend, texCoin, NULL, &rectCoin);
         
-	matrixPos[0] = 0;
-	matrixPos[1] = 0;
-	for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
+        matrixPos[0] = 0;
+        matrixPos[1] = 0;
+        for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
             for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
                 float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
-                // float tempLightPower = distFromCenter - lights[0][0];
-                // tempLightPower = tempLightPower * rand()/RAND_MAX;
-                float tempLightPower = ditherMatrix[matrixPos[0]][matrixPos[1]] * lights[0][0];
+                float tempLightPower = ditherMatrix[matrixPos[0]][matrixPos[1]] * lights[0][0] * r;
                 
-                if (tempLightPower - distFromCenter > -r) {}
+                if (tempLightPower - distFromCenter > 0) {}
                 else {
                     rectLight.x = x;
                     rectLight.y = y;
