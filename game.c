@@ -15,8 +15,6 @@
 #define SPEED (150.0)
 #define GHOST_SPEED (0.50)
 
-#define MIN_LIGHT_POWER (7.0)
-
 #define FPS (60.0)
 
 
@@ -267,8 +265,8 @@ int main(void) {
         {144, rectPlayer.x, rectPlayer.y} // power, x, y
     };
     float ditherMatrix[2][2] = {
-        {-0.25, 0.25},
-        {0.5, 0}
+        {0.25, 0.75},
+        {1, 0.5}
     };
 
 
@@ -396,13 +394,13 @@ int main(void) {
         float topLeft[2] = {lights[0][1] - lights[0][0] - PIXEL_SIZE, lights[0][2] - lights[0][0] - PIXEL_SIZE};
         float bottomRight[2] = {lights[0][1] + lights[0][0] + PIXEL_SIZE, lights[0][2] + lights[0][0] + PIXEL_SIZE};
         int matrixPos[2] = {0, 0}; 
+        int r = rand() % 7; // flicker
         for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
             for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
                 float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
-                float tempLightPower = distFromCenter - lights[0][0];
-                // tempLightPower = tempLightPower * rand()/RAND_MAX;
+                float tempLightPower = ditherMatrix[matrixPos[0]][matrixPos[1]] * lights[0][0];
                 
-                if (tempLightPower < -MIN_LIGHT_POWER) {
+                if (tempLightPower - distFromCenter > -r) {
                     rectLight.x = x;
                     rectLight.y = y;
                     SDL_RenderCopy(rend, texLight, NULL, &rectLight);
@@ -426,19 +424,37 @@ int main(void) {
             SDL_RenderCopy(rend, texGhost, NULL, &rectGhosts[i]);
         }
         SDL_RenderCopy(rend, texCoin, NULL, &rectCoin);
-        // for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
-        //     for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
-        //         float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
-        //         float tempLightPower = distFromCenter - lights[0][0];
-        //         tempLightPower = tempLightPower * rand()/RAND_MAX;
-        //         if (tempLightPower < -MIN_LIGHT_POWER) {}
-        //         else {
-        //             rectLight.x = x;
-        //             rectLight.y = y;
-        //             SDL_RenderCopy(rend, texBlack, NULL, &rectLight);
-        //         }
-        //     }
-        // }
+        
+	matrixPos[0] = 0;
+	matrixPos[1] = 0;
+	for (int x = topLeft[0]; x < bottomRight[0]; x += PIXEL_SIZE) {
+            for (int y = topLeft[1]; y < bottomRight[1]; y += PIXEL_SIZE) {
+                float distFromCenter = sqrt((lights[0][1] - x) * (lights[0][1] - x) + (lights[0][2] - y) * (lights[0][2] - y));
+                // float tempLightPower = distFromCenter - lights[0][0];
+                // tempLightPower = tempLightPower * rand()/RAND_MAX;
+                float tempLightPower = ditherMatrix[matrixPos[0]][matrixPos[1]] * lights[0][0];
+                
+                if (tempLightPower - distFromCenter > -r) {}
+                else {
+                    rectLight.x = x;
+                    rectLight.y = y;
+                    SDL_RenderCopy(rend, texBlack, NULL, &rectLight);
+                }
+
+                if (matrixPos[0]) {
+                    matrixPos[0] = 0;
+                }
+                else {
+                    matrixPos[0] = 1;
+                }
+            }
+            if (matrixPos[1]) {
+                matrixPos[1] = 0;
+            }
+            else {
+                matrixPos[1] = 1;
+            }
+        }
 
         SDL_Rect rectBar;
         //left
@@ -488,6 +504,7 @@ int main(void) {
         double frameTime = (double) (end - start) / CLOCKS_PER_SEC;
         frameTime *= 1000; // seconds to milliseconds
         double waitTime = (1000 - frameTime > 0) ? 1000 - frameTime : 0;
+        if (waitTime == 0) printf("Running slow!");
         SDL_Delay(waitTime/FPS);
 
         frame++;
