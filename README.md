@@ -1,2 +1,7 @@
 # Ghosts
-Not quite sure, but maybe a black, white, grey game?
+
+A black, white, and grey game.
+You are trying to collect coins while avoiding ghosts.
+The arrow in the top left points towards the coin.
+
+![Showcase 5](LINK)
